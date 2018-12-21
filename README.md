@@ -9,19 +9,19 @@ It introduces 10 cmdlets/functions, 5 of which are intermediary and 5 that are i
   
 2. Remove-Stalelogs <ComputerName> : This function removes logs on <Computername> that are older than 8 days from the below common log repositories. It then shows a report in the console of the change in space achieved.
   
-  a. Windows Temp Files.
+    a. Windows Temp Files.
   
-  b. Default Web Site 1 Logs.
+    b. Default Web Site 1 Logs.
   
-  c. Exchange POP3 Logs.
+    c. Exchange POP3 Logs.
   
-  d. IIS HTTPerr Logs.
+    d. IIS HTTPerr Logs.
   
-  e. Lucasware Logs.
+    e. Lucasware Logs.
   
-  f. IIS logs for default website.
+    f. IIS logs for default website.
   
-  g. WID logs.
+    g. WID logs.
   
 3. Get-DiskSpaceUpgrade <ComputerName> : This function queries the server indicated in <Computername> via WMI for freespace and capacity of attached drives and, if there is less than 30% freespace, calculates the amount of space required to bring the drive to 35% freespace.
   
@@ -29,22 +29,22 @@ It introduces 10 cmdlets/functions, 5 of which are intermediary and 5 that are i
   
 5. Add-Diskspace <ComputerName> : This function uses every other cmdlet in the following order:
   
-  a. If not connected to a Vsphere server, executes Initialize-connection.
+    a. If not connected to a Vsphere server, executes Initialize-connection.
   
-  b. Execute Remove-StaleLogs.
+    b. Execute Remove-StaleLogs.
   
-  c. Execute Get-DiskSpaceResult and display needed changes, if any.
+    c. Execute Get-DiskSpaceResult and display needed changes, if any.
   
-  d. For each of the drives that need additional space, expand the vmdk in VSphere. Then construct a diskpart bat script to extend the drive, move it to the remote computer, and then execute it.
+    d. For each of the drives that need additional space, expand the vmdk in VSphere. Then construct a diskpart bat script to extend the drive, move it to the remote computer, and then execute it.
   
-  e. After all drives are completed, re-executes Get-DiskSpaceResult to validate the changes and displays the result in console.
+    e. After all drives are completed, re-executes Get-DiskSpaceResult to validate the changes and displays the result in console.
   
-  f. Failure reasons include:
+    f. Failure reasons include:
   
-    i. Resulting drive would exceed 2 TB.
+      i. Resulting drive would exceed 2 TB.
     
-    ii. Hostname contains "DFS" or "Mailbox" in the name.
+      ii. Hostname contains "DFS" or "Mailbox" in the name.
     
-    iii. There is an existing snapshot.
+      iii. There is an existing snapshot.
     
-    iv. Adding the requested amount to the server would result in the datastore being brought below 20% available space.
+      iv. Adding the requested amount to the server would result in the datastore being brought below 20% available space.
