@@ -58,7 +58,7 @@ $oldip)
 FUNCTION Initialize-Connection($ComputerName)
 {
 
-# This loads the Vsphere PowerCLI environment so you can talk to the VCenter server
+# This loads the Vsphere PowerCLI environment and provides VSphere cmdlets
 
 IF(Test-path -Path 'C:\Program Files (x86)\VMware\Infrastructure\vSphere PowerCLI\Scripts\Initialize-PowerCLIEnvironment.ps1'){
 & 'C:\Program Files (x86)\VMware\Infrastructure\vSphere PowerCLI\Scripts\Initialize-PowerCLIEnvironment.ps1'
@@ -532,12 +532,40 @@ Function Join-Object
 
 Function Get-DiskSpaceUpgrade($ComputerName)
 {
+[CmdletBinding()]
+
+param(
+	[Parameter(Mandatory=$true,
+	ValueFromPipeline = $true,
+	ValueFromPipelineByPropertyName = $true)]
+	[string[]]$computername
+	
+)
 
 # Query target Server for all Partition with non-zero space
-If ((Test-Connection -ComputerName $ComputerName -count 1)){
-$AllPartitions = Get-WmiObject Win32_LogicalDisk -ComputerName $ComputerName | where {$_.size -ne $null} | sort DeviceId
+
+If ((Test-Connection -ComputerName $ComputerName -count 1 -erroraction 'silentlycontinue')){
+
+
+Try
+	{
+
+	$AllPartitions = Get-WmiObject Win32_LogicalDisk -ComputerName $ComputerName -ErrorAction STOP | where-object Size -ne $null | sort-object DeviceID
+
+	}
+Catch [System.UnauthorizedAccessException]
+	{
+	Write-Host "User account lacks access on target server."
+	}
+Catch
+	{
+	Write-Host "Unspecified error accessint WMI on target server"
+	}
+	
 }
 $AllPartitionsResult = @()
+
+
 
 IF($allPartitions){foreach ($EachPartition in $AllPartitions)
     {
