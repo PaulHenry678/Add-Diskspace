@@ -1,13 +1,11 @@
 # Add-Diskspace
-Script to  expand a Windows VM's drive if below 30%
+The purpose of this project is to create a module that will simplify and make more efficient the querying and expansion of windows servers that are VM's in the VMware architecture.
 
-The purpose of this script is to make the process of expanding a virtual machine's disk drive more efficient.
+It introduces 5 cmdlets and 5 intermediate functions.
 
-It introduces 10 cmdlets/functions, 5 of which are intermediary and 5 that are intended for actual use.
-
-1. Initialize-Connection <ComputerName> : This function loads the PowerCLI environment and connects to the VSphere server indicated by <ComputerName>.
+1. Initialize-Connection $ComputerName : This function loads the PowerCLI environment and connects to the VSphere server indicated by $ComputerName.
   
-2. Remove-Stalelogs <ComputerName> : This function removes logs on <Computername> that are older than 8 days from the below common log repositories. It then shows a report in the console of the change in space achieved.
+2. Remove-Stalelogs $ComputerName : This function removes logs on $Computername that are older than 8 days from the below common log repositories. It then shows a report in the console of the change in space achieved.
   
     a. Windows Temp Files.
   
@@ -23,11 +21,11 @@ It introduces 10 cmdlets/functions, 5 of which are intermediary and 5 that are i
   
     g. WID logs.
   
-3. Get-DiskSpaceUpgrade <ComputerName> : This function queries the server indicated in <Computername> via WMI for freespace and capacity of attached drives and, if there is less than 30% freespace, calculates the amount of space required to bring the drive to 35% freespace.
+3. Get-DiskSpaceUpgrade $ComputerName : This function queries the server indicated in $Computername via WMI for freespace and capacity of attached drives and, if there is less than 30% freespace, calculates the amount of space required to bring the drive to 35% freespace.
   
-4. Get-DiskSpaceResult <ComputerName> : This function does the same thing as Get-DiskSpaceUpgrade except it queries the Vsphere server as well to correlate the drives/partitions to specific virtual disk files in Vsphere. It will also determine if the server should not be automatically expanded, given certain conditions.
+4. Get-DiskSpaceResult $ComputerName : This function does the same thing as Get-DiskSpaceUpgrade except it queries the Vsphere server as well to correlate the drives/partitions to specific virtual disk files in Vsphere. It will also determine if the server should not be automatically expanded, given certain conditions.
   
-5. Add-Diskspace <ComputerName> : This function uses every other cmdlet in the following order:
+5. Add-Diskspace $ComputerName : This function uses every other cmdlet in the following order:
   
     a. If not connected to a Vsphere server, executes Initialize-connection.
   
@@ -37,7 +35,7 @@ It introduces 10 cmdlets/functions, 5 of which are intermediary and 5 that are i
   
     d. For each of the drives that need additional space, expand the vmdk in VSphere. Then construct a diskpart bat script to extend the drive, move it to the remote computer, and then execute it.
   
-    e. After all drives are completed, re-executes Get-DiskSpaceResult to validate the changes and displays the result in console.
+    e. After all drives are completed, executes Get-DiskSpaceUpgrade to validate the changes and displays the result in console.
   
     f. Failure reasons include:
   
@@ -62,3 +60,7 @@ It introduces 10 cmdlets/functions, 5 of which are intermediary and 5 that are i
   a. Example: Server A has 2 drives, C: and E:. Drive C: has 100 GB provisioned, but needs to be expanded to 120 GB. Drive E: has 1800 GB provisioned, but needs to be expanded to 2200 GB. Because this would bring that drive above 2048 GB, neither drive will be expanded. Ideally, I would want the C: drive to be expanded and the E: drive to expand to 2048 and report that there was an issue.
   
 5. Configure Add-Diskspace additional optional parameters, specifing which drive letter, vmware hard disk, or windows disk/partition to expand.
+
+6. Determine if there is a way to detect what vsphere servers exist on a network without knowing their names, and automate connecting to them.
+
+7. Package this group of cmdlets into a module.
