@@ -48,3 +48,17 @@ It introduces 10 cmdlets/functions, 5 of which are intermediary and 5 that are i
       iii. There is an existing snapshot.
     
       iv. Adding the requested amount to the server would result in the datastore being brought below 20% available space.
+
+
+## Roadmap
+
+1. Configure cmdlet binding and enable pipeline use for all functions that are intended to be used as cmdlets. 
+
+2. Rename functions that are not intended to be used as cmdlets from the verb-noun nomenclature to a simple description of their use.
+
+3. Determine other paths that might need to be evaluated for removing in Remove-StaleLogs
+
+4. Find a way to deal with expanding drives that do not have an error when another drive does have an error.
+  a. Example: Server A has 2 drives, C: and E:. Drive C: has 100 GB provisioned, but needs to be expanded to 120 GB. Drive E: has 1800 GB provisioned, but needs to be expanded to 2200 GB. Because this would bring that drive above 2048 GB, neither drive will be expanded. Ideally, I would want the C: drive to be expanded and the E: drive to expand to 2048 and report that there was an issue.
+  
+5. Configure Add-Diskspace additional optional parameters, specifing which drive letter, vmware hard disk, or windows disk/partition to expand.
