@@ -879,10 +879,19 @@ IF($FinalResult){$FinalResult = $FinalResult | select ServerName,@{l='TotalAmoun
 RETURN $FinalResult | sort servername,driveletter
 }
 
-Function Add-DiskSpace($ComputerName)
+Function Add-DiskSpace
 {
-
-Remove-StaleLogs $ComputerName
+[CmdletBinding()]
+param(
+	
+    [Parameter(Mandatory=$True,
+               ValueFromPipeline=$True,
+               ValueFromPipelineByPropertyName=$True)]
+    [string[]]$computerName,
+    [Parameter(Mandatory=$false)]
+    [switch]$removelogs
+)
+IF($removelogs){Remove-StaleLogs $ComputerName}
 
 IF(!($global:DefaultVIServer))
     {
